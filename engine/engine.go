@@ -6,15 +6,18 @@ import (
 	"log"
 )
 
-const PORT = 8000;
+const PORT = 8080;
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
+type EngineHandler struct {}
+
+func (h *EngineHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hi " + r.URL.Path)
 }
 
 func NewEngine() {
-	http.HandleFunc("/", helloHandler)
+	mux := http.NewServeMux()
+	mux.Handle("/", &EngineHandler{})
 
 	log.Printf("Server started on port %d", PORT)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":8080", mux))
 }
